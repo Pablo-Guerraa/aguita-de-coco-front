@@ -46,8 +46,9 @@ export function WhyChooseItBottle({ fillPercent, isComplete, className }: WhyCho
           <path d={BODY_PATH} />
         </clipPath>
         <linearGradient id="why-liquid-gradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--color-accent-lime)" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="var(--color-primary-green)" stopOpacity="0.65" />
+          <stop offset="0%" stopColor="#F8FAF1" stopOpacity="0.78" />
+          <stop offset="48%" stopColor="#EEF3E3" stopOpacity="0.72" />
+          <stop offset="100%" stopColor="#DDE9D4" stopOpacity="0.76" />
         </linearGradient>
         <linearGradient id="why-glass-sheen" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="white" stopOpacity="0.55" />

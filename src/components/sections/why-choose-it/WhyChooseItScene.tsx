@@ -26,7 +26,7 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
   const complete = isFillComplete(progress);
 
   return (
-    <div className="flex h-full flex-col items-center justify-center">
+    <div className="flex h-full w-full flex-col items-center justify-center lg:justify-start lg:pt-4 lg:pb-6">
       <div className="why-coco-bob relative z-10 w-[104px] shrink-0 will-change-transform sm:w-[120px] lg:w-[140px]">
         <div className="relative aspect-square">
           <Image
@@ -45,7 +45,11 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
         )}
       </div>
 
-      <WhyChooseItJet opacity={jetOpacity} growth={jetGrowth} className="h-14 w-6 sm:h-16 lg:h-20" />
+      <WhyChooseItJet
+        opacity={jetOpacity}
+        growth={jetGrowth}
+        className="h-14 w-6 shrink-0 sm:h-16 lg:h-auto lg:min-h-24 lg:flex-1"
+      />
 
       <div className="w-[132px] shrink-0 sm:w-[150px] lg:w-[176px]">
         <WhyChooseItBottle

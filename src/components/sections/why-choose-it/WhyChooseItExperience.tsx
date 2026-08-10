@@ -31,7 +31,7 @@ export function WhyChooseItExperience({ attributes }: WhyChooseItExperienceProps
         <WhyChooseItAttributesList attributes={attributes} progress={progress} />
       </div>
 
-      <div className="order-1 top-20 z-0 flex h-[44vh] items-center justify-center sticky sm:h-[50vh] lg:h-[72vh] lg:order-2">
+      <div className="order-1 top-20 z-0 flex h-[44vh] items-center justify-center sticky sm:h-[50vh] lg:h-[calc(100svh-6rem)] lg:order-2">
         <WhyChooseItScene progress={progress} />
       </div>
     </div>
