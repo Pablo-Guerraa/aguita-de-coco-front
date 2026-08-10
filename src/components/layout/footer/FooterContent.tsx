@@ -31,16 +31,16 @@ export function FooterContent({ footer }: FooterContentProps) {
           ornamental, kept out of the a11y tree and pointer events. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-0 right-6 z-10 w-28 -translate-y-full sm:right-12 sm:w-32 lg:right-20 lg:w-36"
+        className="pointer-events-none absolute right-6 bottom-full z-10 w-28 translate-y-[6px] sm:right-12 sm:w-32 lg:right-20 lg:w-36"
       >
         <div className="footer-coco-mascot">
           <Image
-            src="/fun-coco.png"
-            alt=""
-            width={256}
-            height={256}
-            className="h-auto w-full drop-shadow-xl"
-          />
+          src="/fun-coco.png"
+          alt=""
+          width={1143}
+          height={921}
+          className="block h-auto w-full drop-shadow-xl"
+        />
         </div>
       </div>
 
