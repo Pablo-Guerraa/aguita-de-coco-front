@@ -2,6 +2,7 @@
 
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import type { WhyChooseItAttribute } from "@/types/why-choose-it";
+import { WhyChooseItActiveAttributeMobile } from "./WhyChooseItActiveAttributeMobile";
 import { WhyChooseItAttributesList } from "./WhyChooseItAttributesList";
 import { WhyChooseItScene } from "./WhyChooseItScene";
 
@@ -27,12 +28,15 @@ export function WhyChooseItExperience({ attributes }: WhyChooseItExperienceProps
 
   return (
     <div ref={ref} className="grid gap-6 lg:grid-cols-2 lg:items-start lg:gap-16">
-      <div className="order-2 lg:order-1">
+      <div className="pointer-events-none col-start-1 row-start-1 order-2 invisible lg:pointer-events-auto lg:visible lg:col-auto lg:row-auto lg:order-1">
         <WhyChooseItAttributesList attributes={attributes} progress={progress} />
       </div>
 
-      <div className="order-1 top-20 z-0 flex h-[44vh] items-center justify-center sticky sm:h-[50vh] lg:h-[calc(100svh-6rem)] lg:order-2">
-        <WhyChooseItScene progress={progress} />
+      <div className="order-1 top-16 z-0 col-start-1 row-start-1 flex h-[calc(100svh-4rem)] flex-col items-center px-1 pt-4 pb-7 sticky lg:top-20 lg:col-auto lg:row-auto lg:h-[calc(100svh-6rem)] lg:order-2 lg:justify-center lg:px-0 lg:pt-0 lg:pb-0">
+        <WhyChooseItActiveAttributeMobile attributes={attributes} progress={progress} />
+        <div className="min-h-0 w-full flex-1">
+          <WhyChooseItScene progress={progress} />
+        </div>
       </div>
     </div>
   );
