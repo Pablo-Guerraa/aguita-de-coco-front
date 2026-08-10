@@ -25,21 +25,23 @@ export function FooterContent({ footer }: FooterContentProps) {
   return (
     <footer
       ref={ref}
-      className={`relative overflow-hidden bg-text-primary text-white ${inView ? "footer-inview" : ""}`}
+      className={`relative bg-text-primary text-white ${inView ? "footer-inview" : ""}`}
     >
       {/* Decorative "Coco" mascot peeking from the top edge — purely
           ornamental, kept out of the a11y tree and pointer events. */}
       <div
         aria-hidden="true"
-        className="footer-coco-mascot pointer-events-none absolute -top-7 right-6 w-20 sm:-top-10 sm:right-12 sm:w-28 lg:right-20 lg:w-32"
+        className="pointer-events-none absolute top-0 right-6 z-10 w-28 -translate-y-1/2 sm:right-12 sm:w-32 lg:right-20 lg:w-36"
       >
-        <Image
-          src="/fun-coco.png"
-          alt=""
-          width={256}
-          height={256}
-          className="h-auto w-full drop-shadow-xl"
-        />
+        <div className="footer-coco-mascot">
+          <Image
+            src="/fun-coco.png"
+            alt=""
+            width={256}
+            height={256}
+            className="h-auto w-full drop-shadow-xl"
+          />
+        </div>
       </div>
 
       <div className="mx-auto max-w-6xl px-4 pt-20 pb-8 sm:px-6 sm:pt-24 lg:px-8">
