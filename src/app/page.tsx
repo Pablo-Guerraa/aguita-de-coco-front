@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Hero } from "@/components/sections/Hero";
 import { Introduction } from "@/components/sections/Introduction";
 import { Products } from "@/components/sections/Products";
+import { Moments } from "@/components/sections/Moments";
 
 export default function Home() {
   return (
@@ -11,10 +12,10 @@ export default function Home() {
         <Hero />
         <Introduction />
         <Products />
+        <Moments />
         {/*
           Future sections (to be implemented separately):
           - Por qué elegirla
-          - Cómo disfrutarla
           - Dónde comprar / pedidos (#contacto)
         */}
       </main>

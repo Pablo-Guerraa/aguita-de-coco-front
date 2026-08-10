@@ -1,0 +1,25 @@
+{
+  "moments": [
+    {
+      "id": 1,
+      "title": "Después de entrenar",
+      "description": "Texto temporal: hidratación ligera para recuperar energía.",
+      "image": "/logo.png",
+      "optionalLabel": "Ideal en 240 ml"
+    },
+    {
+      "id": 2,
+      "title": "Con tus comidas",
+      "description": "Texto temporal: el acompañante perfecto para cada comida.",
+      "image": "/logo.png",
+      "optionalLabel": "Varios sabores"
+    },
+    {
+      "id": 3,
+      "title": "Para compartir",
+      "description": "Texto temporal: frescura de coco para toda la mesa.",
+      "image": "/logo.png",
+      "optionalLabel": "Presentación 1 litro"
+    }
+  ]
+}
