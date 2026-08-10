@@ -31,7 +31,7 @@ export function FooterContent({ footer }: FooterContentProps) {
           ornamental, kept out of the a11y tree and pointer events. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-0 right-6 z-10 w-28 -translate-y-1/2 sm:right-12 sm:w-32 lg:right-20 lg:w-36"
+        className="pointer-events-none absolute top-0 right-6 z-10 w-28 -translate-y-full sm:right-12 sm:w-32 lg:right-20 lg:w-36"
       >
         <div className="footer-coco-mascot">
           <Image
@@ -44,7 +44,7 @@ export function FooterContent({ footer }: FooterContentProps) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 pt-20 pb-8 sm:px-6 sm:pt-24 lg:px-8">
+      <div className="mx-auto max-w-6xl px-4 pt-12 pb-8 sm:px-6 sm:pt-14 lg:px-8">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.1fr] lg:gap-8">
           {/* Brand */}
           <div className="footer-animate-item" style={{ "--stagger": 0 } as StaggerStyle}>
