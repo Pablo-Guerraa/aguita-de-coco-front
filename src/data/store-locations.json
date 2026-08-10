@@ -1,0 +1,64 @@
+{
+  "locations": [
+    {
+      "id": "bog-usaquen",
+      "name": "Fresh Market Usaquén",
+      "city": "Bogotá",
+      "address": "Cra. 6a #119-30",
+      "latitude": 4.6946,
+      "longitude": -74.0313,
+      "type": "Supermercado",
+      "availableProducts": ["Agua de coco 240 ml", "Agua de coco 1 L", "Tamarindo 240 ml"]
+    },
+    {
+      "id": "bog-chapinero",
+      "name": "Tienda Natural Vitalé",
+      "city": "Bogotá",
+      "address": "Calle 63 #9-45",
+      "latitude": 4.6486,
+      "longitude": -74.0628,
+      "type": "Tienda naturista",
+      "availableProducts": ["Agua de coco 240 ml", "Corozo 240 ml"]
+    },
+    {
+      "id": "med-poblado",
+      "name": "Mercado El Poblado",
+      "city": "Medellín",
+      "address": "Cra. 43a #10-12",
+      "latitude": 6.2088,
+      "longitude": -75.5679,
+      "type": "Supermercado",
+      "availableProducts": ["Agua de coco 240 ml", "Agua de coco 1 L", "Tamarindo 1 L"]
+    },
+    {
+      "id": "med-distribuidora",
+      "name": "Distribuidora Sabor Tropical",
+      "city": "Medellín",
+      "address": "Calle 30 #65-20",
+      "latitude": 6.2308,
+      "longitude": -75.5906,
+      "type": "Distribuidor autorizado",
+      "availableProducts": ["Agua de coco 240 ml", "Agua de coco 1 L", "Tamarindo 240 ml", "Corozo 240 ml"]
+    },
+    {
+      "id": "ctg-bocagrande",
+      "name": "Mercado Bocagrande",
+      "city": "Cartagena",
+      "address": "Cra. 2 #8-120",
+      "latitude": 10.4004,
+      "longitude": -75.554,
+      "type": "Supermercado",
+      "availableProducts": ["Agua de coco 240 ml", "Agua de coco 1 L", "Corozo 1 L"]
+    },
+    {
+      "id": "ctg-lapalma",
+      "name": "Restaurante La Palma",
+      "city": "Cartagena",
+      "address": "Calle del Arsenal #7-25",
+      "latitude": 10.4236,
+      "longitude": -75.5497,
+      "type": "Restaurante",
+      "availableProducts": ["Agua de coco 240 ml"]
+    }
+  ]
+}

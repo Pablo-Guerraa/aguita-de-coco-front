@@ -173,6 +173,69 @@ body {
     transform: scale(1);
   }
 }
+
+/**
+ * "Dónde comprar" store locator — custom Leaflet map pins.
+ * Leaflet's divIcon renders raw HTML outside of React/Tailwind's reach for
+ * inline animation timing, so the teardrop shape + stagger delay are
+ * defined here and driven via the `--pin-color`/`--pin-size`/`--pin-delay`
+ * CSS variables set inline per marker.
+ */
+.store-pin-wrapper {
+  background: transparent !important;
+  border: none !important;
+}
+
+.store-pin {
+  position: relative;
+  display: block;
+  width: var(--pin-size, 28px);
+  height: var(--pin-size, 28px);
+}
+
+.store-pin-drop {
+  position: absolute;
+  inset: 0;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--color-primary-green);
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 2px 6px rgb(23 53 39 / 35%);
+  transition:
+    background-color 250ms ease-out,
+    transform 250ms ease-out;
+}
+
+.store-pin-drop-selected {
+  background: var(--color-accent-lime);
+}
+
+.store-pin-dot {
+  position: absolute;
+  top: 28%;
+  left: 28%;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: var(--color-surface);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .store-pin-animate .store-pin-drop {
+    animation: store-pin-in 420ms cubic-bezier(0.16, 1, 0.3, 1) var(--pin-delay, 0ms) both;
+  }
+}
+
+@keyframes store-pin-in {
+  0% {
+    transform: rotate(-45deg) scale(0.3);
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(-45deg) scale(1);
+    opacity: 1;
+  }
+}
 /*---break---
  */
 @theme inline {

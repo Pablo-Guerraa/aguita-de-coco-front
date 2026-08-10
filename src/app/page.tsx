@@ -3,6 +3,7 @@ import { Hero } from "@/components/sections/Hero";
 import { Introduction } from "@/components/sections/Introduction";
 import { Products } from "@/components/sections/Products";
 import { Moments } from "@/components/sections/Moments";
+import { WhereToBuy } from "@/components/sections/WhereToBuy";
 
 export default function Home() {
   return (
@@ -13,10 +14,10 @@ export default function Home() {
         <Introduction />
         <Products />
         <Moments />
+        <WhereToBuy />
         {/*
           Future sections (to be implemented separately):
           - Por qué elegirla
-          - Dónde comprar / pedidos (#contacto)
         */}
       </main>
       {/* Footer (to be implemented separately) */}
