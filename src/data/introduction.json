@@ -1,0 +1,25 @@
+{
+  "slides": [
+    {
+      "id": 1,
+      "image": "/logo.png",
+      "eyebrow": "Origen",
+      "title": "Seleccionamos nuestros cocos",
+      "description": "Texto temporal sobre la selección de cocos locales para preparar el producto."
+    },
+    {
+      "id": 2,
+      "image": "/logo.png",
+      "eyebrow": "Proceso",
+      "title": "Preparamos cada botella",
+      "description": "Texto temporal sobre el proceso artesanal de preparación y embotellamiento."
+    },
+    {
+      "id": 3,
+      "image": "/logo.png",
+      "eyebrow": "Frescura",
+      "title": "Lista para disfrutar",
+      "description": "Texto temporal sobre refrigeración y preparación del producto terminado."
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Hero } from "@/components/sections/Hero";
+import { Introduction } from "@/components/sections/Introduction";
+import { Products } from "@/components/sections/Products";
 
 export default function Home() {
   return (
@@ -7,10 +9,10 @@ export default function Home() {
       <Header />
       <main className="flex-1 bg-background">
         <Hero />
+        <Introduction />
+        <Products />
         {/*
           Future sections (to be implemented separately):
-          - Introducción       (#sobre-nosotros)
-          - Productos y sabores (#nuestros-productos)
           - Por qué elegirla
           - Cómo disfrutarla
           - Dónde comprar / pedidos (#contacto)

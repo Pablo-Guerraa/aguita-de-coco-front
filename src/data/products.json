@@ -1,0 +1,37 @@
+{
+  "products": [
+    {
+      "id": "agua-de-coco",
+      "name": "Agua de coco",
+      "shortDescription": "Agua de coco pura y natural, tal como la da la naturaleza.",
+      "image": "/bottle.png",
+      "accentColor": "#046F35",
+      "presentations": [
+        { "id": "240ml", "label": "240 ml", "price": 4000, "sizeScale": 0.85 },
+        { "id": "1l", "label": "1 Litro", "price": 12000, "sizeScale": 1.05 }
+      ]
+    },
+    {
+      "id": "tamarindo",
+      "name": "Tamarindo",
+      "shortDescription": "Un toque agridulce de tamarindo sobre nuestra agua de coco.",
+      "image": "/bottle.png",
+      "accentColor": "#7A4B2A",
+      "presentations": [
+        { "id": "240ml", "label": "240 ml", "price": 4500, "sizeScale": 0.85 },
+        { "id": "1l", "label": "1 Litro", "price": 13000, "sizeScale": 1.05 }
+      ]
+    },
+    {
+      "id": "corozo",
+      "name": "Corozo",
+      "shortDescription": "Sabor intenso y tropical, directo del corozo colombiano.",
+      "image": "/bottle.png",
+      "accentColor": "#8E2A55",
+      "presentations": [
+        { "id": "240ml", "label": "240 ml", "price": 4500, "sizeScale": 0.85 },
+        { "id": "1l", "label": "1 Litro", "price": 13000, "sizeScale": 1.05 }
+      ]
+    }
+  ]
+}
