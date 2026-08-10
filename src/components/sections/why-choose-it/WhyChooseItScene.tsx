@@ -5,9 +5,12 @@ import { Sparkles } from "lucide-react";
 import { WhyChooseItBottle } from "./WhyChooseItBottle";
 import { WhyChooseItJet } from "./WhyChooseItJet";
 import {
+  getFinishCocoOpacity,
   getFillPercent,
+  getIdleCocoOpacity,
   getJetGrowth,
   getJetOpacity,
+  getPouringCocoOpacity,
   isFillComplete,
 } from "./why-choose-it-utils";
 
@@ -24,6 +27,9 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
   const jetOpacity = getJetOpacity(progress);
   const jetGrowth = getJetGrowth(progress);
   const complete = isFillComplete(progress);
+  const idleOpacity = getIdleCocoOpacity(progress);
+  const pouringOpacity = getPouringCocoOpacity(progress);
+  const finishOpacity = getFinishCocoOpacity(progress);
 
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center lg:justify-start lg:pt-4 lg:pb-6">
@@ -37,14 +43,41 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
         }}
       />
 
-      <div className="why-coco-bob relative z-10 w-[104px] shrink-0 will-change-transform sm:w-[120px] lg:w-[140px]">
-        <div className="relative aspect-square">
+      <div
+        className="why-coco-bob relative z-10 w-[104px] shrink-0 will-change-transform sm:w-[120px] lg:w-[140px]"
+        role="img"
+        aria-label="Coco, la mascota de Aguita de Coco, sirviendo agua de coco fresca"
+      >
+        <div className="relative aspect-square overflow-hidden">
           <Image
             src="/coco.png"
-            alt="Coco, la mascota de Aguita de Coco, sirviendo agua de coco fresca"
+            alt=""
             fill
             sizes="140px"
-            className="object-contain drop-shadow-xl"
+            className="object-contain object-center drop-shadow-xl"
+            style={{ opacity: idleOpacity, transform: "scale(0.96) translateY(1%)" }}
+          />
+          <Image
+            src="/coco-pouring.png"
+            alt=""
+            fill
+            sizes="140px"
+            className="object-contain object-[48%_52%] drop-shadow-xl"
+            style={{
+              opacity: pouringOpacity,
+              transform: "translateX(-1.5%) scale(1.04)",
+            }}
+          />
+          <Image
+            src="/coco-finish.png"
+            alt=""
+            fill
+            sizes="140px"
+            className="object-contain object-[50%_48%] drop-shadow-xl"
+            style={{
+              opacity: finishOpacity,
+              transform: "translateY(1.5%) scale(1.18)",
+            }}
           />
         </div>
         {complete && (
