@@ -32,7 +32,7 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
   const finishOpacity = getFinishCocoOpacity(progress);
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center lg:justify-start lg:pt-4 lg:pb-6">
+    <div className="relative flex h-full w-full flex-col items-center justify-start pt-3 lg:pt-4 lg:pb-6">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-[5%] left-1/2 z-0 w-[72%] max-w-[420px] -translate-x-1/2 blur-2xl"
@@ -44,7 +44,7 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
       />
 
       <div
-        className="why-coco-bob relative z-10 w-[104px] shrink-0 will-change-transform sm:w-[120px] lg:w-[140px]"
+        className="why-coco-bob relative z-10 w-[88px] shrink-0 will-change-transform sm:w-[104px] lg:w-[140px]"
         role="img"
         aria-label="Coco, la mascota de Aguita de Coco, sirviendo agua de coco fresca"
       >
@@ -91,10 +91,10 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
       <WhyChooseItJet
         opacity={jetOpacity}
         growth={jetGrowth}
-        className="z-10 h-14 w-6 shrink-0 sm:h-16 lg:h-auto lg:min-h-24 lg:flex-1"
+        className="z-10 min-h-12 w-6 flex-1 lg:h-auto lg:min-h-24 lg:flex-1"
       />
 
-      <div className="relative z-10 w-[132px] shrink-0 sm:w-[150px] lg:w-[176px]">
+      <div className="relative z-10 w-[128px] shrink-0 sm:w-[144px] lg:w-[176px]">
         <WhyChooseItBottle
           fillPercent={fillPercent}
           isComplete={complete}

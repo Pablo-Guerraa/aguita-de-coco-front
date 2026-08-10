@@ -6,7 +6,7 @@ import { getActiveAttributeIndex } from "./why-choose-it-utils";
 
 /** One icon per attribute, in order. Falls back to cycling if more
  * attributes are ever added than icons defined here. */
-const ATTRIBUTE_ICONS: LucideIcon[] = [Sprout, Leaf, ShieldCheck, Salad, Snowflake];
+export const ATTRIBUTE_ICONS: LucideIcon[] = [Sprout, Leaf, ShieldCheck, Salad, Snowflake];
 
 interface WhyChooseItAttributesListProps {
   attributes: WhyChooseItAttribute[];
