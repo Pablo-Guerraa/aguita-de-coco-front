@@ -65,6 +65,27 @@ export function getJetGrowth(progress: number): number {
   return smoothstep(JET_FADE_IN_START, JET_FADE_IN_END, progress);
 }
 
+const COCO_POUR_START = 0.16;
+const COCO_POUR_END = 0.24;
+const COCO_FINISH_START = 0.88;
+const COCO_FINISH_END = 0.97;
+
+/** Opacities for Coco's three scroll-linked poses. Adjacent poses always
+ * crossfade, so changing pose never swaps an image abruptly. */
+export function getIdleCocoOpacity(progress: number): number {
+  return 1 - smoothstep(COCO_POUR_START, COCO_POUR_END, progress);
+}
+
+export function getPouringCocoOpacity(progress: number): number {
+  const enter = smoothstep(COCO_POUR_START, COCO_POUR_END, progress);
+  const leave = 1 - smoothstep(COCO_FINISH_START, COCO_FINISH_END, progress);
+  return enter * leave;
+}
+
+export function getFinishCocoOpacity(progress: number): number {
+  return smoothstep(COCO_FINISH_START, COCO_FINISH_END, progress);
+}
+
 /** True once the bottle has (visually) finished filling — used to trigger
  * the small closing "freshness" flourish. */
 export function isFillComplete(progress: number): boolean {
