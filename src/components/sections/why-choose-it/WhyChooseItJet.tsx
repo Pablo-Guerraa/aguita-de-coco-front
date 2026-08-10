@@ -16,21 +16,14 @@ export function WhyChooseItJet({ opacity, growth, className }: WhyChooseItJetPro
   return (
     <div
       aria-hidden="true"
-      className={`why-jet pointer-events-none ${className ?? ""}`}
+      className={`why-jet pointer-events-none relative ${className ?? ""}`}
       style={{ opacity, transform: `scaleY(${Math.max(growth, 0.001)})` }}
     >
-      <svg viewBox="0 0 24 96" className="h-full w-full overflow-visible">
-        <defs>
-          <linearGradient id="why-jet-gradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--color-accent-lime)" stopOpacity="0.1" />
-            <stop offset="20%" stopColor="var(--color-primary-green)" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="var(--color-primary-green)" stopOpacity="0.9" />
-          </linearGradient>
-        </defs>
-        <rect x="9" y="0" width="6" height="96" rx="3" fill="url(#why-jet-gradient)" className="why-jet-stream" />
-        <circle cx="12" cy="26" r="2" fill="var(--color-primary-green)" className="why-jet-drop why-jet-drop-a" />
-        <circle cx="12" cy="58" r="1.6" fill="var(--color-primary-green)" className="why-jet-drop why-jet-drop-b" />
-      </svg>
+      <div className="why-jet-stream absolute inset-y-0 left-[calc(50%-3px)] w-1.5 overflow-hidden rounded-full bg-gradient-to-b from-[#FFFBEA]/65 via-[#F3E9BD]/85 to-[#DCE6B8]/90 shadow-[0_0_6px_rgba(243,233,189,0.55)]">
+        <span className="absolute inset-y-0 left-[1px] w-px bg-white/60" />
+      </div>
+      <span className="why-jet-drop why-jet-drop-a absolute top-[27%] left-[calc(50%-2px)] size-1 rounded-full bg-[#FFFBEA]/95" />
+      <span className="why-jet-drop why-jet-drop-b absolute top-[60%] left-[calc(50%-2px)] size-1 rounded-full bg-[#F3E9BD]/90" />
     </div>
   );
 }

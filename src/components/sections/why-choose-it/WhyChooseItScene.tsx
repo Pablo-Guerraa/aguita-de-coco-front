@@ -26,7 +26,17 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
   const complete = isFillComplete(progress);
 
   return (
-    <div className="flex h-full flex-col items-center justify-center">
+    <div className="relative flex h-full w-full flex-col items-center justify-center lg:justify-start lg:pt-4 lg:pb-6">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-[5%] left-1/2 z-0 w-[72%] max-w-[420px] -translate-x-1/2 blur-2xl"
+        style={{
+          background:
+            "radial-gradient(ellipse at 48% 45%, rgb(216 184 146 / 20%) 0%, rgb(216 184 146 / 15%) 48%, transparent 76%)",
+          borderRadius: "46% 54% 43% 57% / 55% 44% 56% 45%",
+        }}
+      />
+
       <div className="why-coco-bob relative z-10 w-[104px] shrink-0 will-change-transform sm:w-[120px] lg:w-[140px]">
         <div className="relative aspect-square">
           <Image
@@ -45,9 +55,13 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
         )}
       </div>
 
-      <WhyChooseItJet opacity={jetOpacity} growth={jetGrowth} className="h-14 w-6 sm:h-16 lg:h-20" />
+      <WhyChooseItJet
+        opacity={jetOpacity}
+        growth={jetGrowth}
+        className="z-10 h-14 w-6 shrink-0 sm:h-16 lg:h-auto lg:min-h-24 lg:flex-1"
+      />
 
-      <div className="w-[132px] shrink-0 sm:w-[150px] lg:w-[176px]">
+      <div className="relative z-10 w-[132px] shrink-0 sm:w-[150px] lg:w-[176px]">
         <WhyChooseItBottle
           fillPercent={fillPercent}
           isComplete={complete}
