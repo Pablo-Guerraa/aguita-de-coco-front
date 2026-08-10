@@ -46,9 +46,9 @@ export function WhyChooseItBottle({ fillPercent, isComplete, className }: WhyCho
           <path d={BODY_PATH} />
         </clipPath>
         <linearGradient id="why-liquid-gradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#F8FAF1" stopOpacity="0.78" />
-          <stop offset="48%" stopColor="#EEF3E3" stopOpacity="0.72" />
-          <stop offset="100%" stopColor="#DDE9D4" stopOpacity="0.76" />
+          <stop offset="0%" stopColor="#FFFBEA" stopOpacity="0.92" />
+          <stop offset="48%" stopColor="#F3E9BD" stopOpacity="0.94" />
+          <stop offset="100%" stopColor="#DCE6B8" stopOpacity="0.92" />
         </linearGradient>
         <linearGradient id="why-glass-sheen" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="white" stopOpacity="0.55" />
@@ -107,7 +107,7 @@ export function WhyChooseItBottle({ fillPercent, isComplete, className }: WhyCho
       </g>
 
       {/* Glass outline on top of the liquid */}
-      <path d={BODY_PATH} fill="none" stroke="var(--color-border)" strokeWidth={2.5} />
+      <path d={BODY_PATH} fill="none" stroke="var(--color-border)" strokeWidth={3} />
       <path d={BODY_PATH} fill="url(#why-glass-sheen)" opacity={0.5} />
 
       {/* Neck + cap */}
