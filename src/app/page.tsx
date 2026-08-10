@@ -1,4 +1,5 @@
 import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { Introduction } from "@/components/sections/Introduction";
 import { Products } from "@/components/sections/Products";
@@ -20,7 +21,7 @@ export default function Home() {
           - Por qué elegirla
         */}
       </main>
-      {/* Footer (to be implemented separately) */}
+      <Footer />
     </>
   );
 }

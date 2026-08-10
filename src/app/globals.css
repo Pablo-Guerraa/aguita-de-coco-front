@@ -236,6 +236,59 @@ body {
     opacity: 1;
   }
 }
+
+/**
+ * Footer entrance animations.
+ * Each functional block (brand, nav, contact, wholesale, legal bar) fades
+ * in + rises slightly with a gentle stagger driven by the `--stagger`
+ * custom property set inline per block. The "Coco" mascot slides up as if
+ * emerging from behind the footer's top edge. Everything is gated behind
+ * `prefers-reduced-motion: no-preference` and only triggers once the
+ * footer enters the viewport (see useInViewOnce + the `.footer-inview`
+ * class toggled in FooterContent.tsx).
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .footer-animate-item {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .footer-inview .footer-animate-item {
+    animation: footer-fade-up 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--stagger, 0) * 110ms);
+  }
+
+  .footer-coco-mascot {
+    opacity: 0;
+    transform: translateY(45%);
+  }
+
+  .footer-inview .footer-coco-mascot {
+    animation: footer-coco-in 750ms cubic-bezier(0.16, 1, 0.3, 1) 150ms both;
+  }
+}
+
+@keyframes footer-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes footer-coco-in {
+  0% {
+    opacity: 0;
+    transform: translateY(45%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 /*---break---
  */
 @theme inline {
