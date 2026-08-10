@@ -133,7 +133,7 @@ export function IntroductionSlider({ slides }: IntroductionSliderProps) {
             <div
               key={slide.id}
               aria-hidden={index !== activeIndex}
-              className={`col-start-1 row-start-1 h-full w-full transition-[opacity,transform] duration-700 ease-out ${
+              className={`relative col-start-1 row-start-1 h-full w-full transition-[opacity,transform] duration-700 ease-out ${
                 index === activeIndex ? "scale-100 opacity-100" : "scale-105 opacity-0"
               }`}
             >
