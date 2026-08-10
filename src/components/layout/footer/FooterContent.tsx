@@ -107,18 +107,6 @@ export function FooterContent({ footer }: FooterContentProps) {
                   {footer.contact.instagramHandle}
                 </a>
               </li>
-              <li>
-                <a
-                  href={footer.contact.emailUrl}
-                  className={`group flex items-center gap-2 text-sm ${linkHoverClass}`}
-                >
-                  <Mail
-                    className="h-4 w-4 shrink-0 text-white/50 transition-colors group-hover:text-accent-lime"
-                    aria-hidden="true"
-                  />
-                  {footer.contact.email}
-                </a>
-              </li>
             </ul>
           </div>
 
