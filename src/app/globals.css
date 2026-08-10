@@ -289,6 +289,148 @@ body {
     transform: translateY(0);
   }
 }
+/**
+ * "Por qué elegirla" — scroll-linked coconut + bottle scene.
+ * The liquid level, jet opacity/growth and coconut position are all set
+ * inline from JS as a direct function of scroll progress (see
+ * why-choose-it-utils.ts) — nothing here runs on its own timer except
+ * small idle flourishes (surface wobble, bubbles, jet shimmer, coconut
+ * bob), which are purely decorative and disabled entirely for
+ * `prefers-reduced-motion: reduce`.
+ */
+.why-jet {
+  transform-origin: top center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .why-coco-bob {
+    animation: why-coco-bob 4.6s ease-in-out infinite;
+  }
+
+  .why-jet-stream {
+    animation: why-jet-shimmer 900ms linear infinite;
+  }
+
+  .why-jet-drop {
+    animation: why-jet-drop-fall 900ms ease-in infinite;
+  }
+
+  .why-jet-drop-b {
+    animation-delay: 450ms;
+  }
+
+  .why-liquid-surface {
+    animation: why-liquid-wobble 2.6s ease-in-out infinite;
+  }
+
+  .why-bubble {
+    animation: why-bubble-rise 2.4s ease-in infinite;
+  }
+
+  .why-bubble-b {
+    animation-delay: 900ms;
+  }
+
+  .why-freshness-sparkle {
+    animation: why-sparkle-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes why-coco-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes why-jet-shimmer {
+  0% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(12px);
+  }
+}
+
+@keyframes why-jet-drop-fall {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(26px);
+    opacity: 0;
+  }
+}
+
+@keyframes why-liquid-wobble {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(1);
+  }
+  50% {
+    transform: translateY(-1.5px) scaleX(1.02);
+  }
+}
+
+@keyframes why-bubble-rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  85% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(-34px);
+    opacity: 0;
+  }
+}
+
+@keyframes why-sparkle-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-15deg);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.why-final-droplets {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .why-final-droplets {
+    animation: why-final-droplets-in 600ms ease-out 200ms both;
+  }
+}
+
+@keyframes why-final-droplets-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 /*---break---
  */
 @theme inline {

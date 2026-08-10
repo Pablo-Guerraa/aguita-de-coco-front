@@ -1,0 +1,29 @@
+{
+  "attributes": [
+    {
+      "id": 1,
+      "title": "Cocos locales",
+      "description": "Texto temporal: seleccionamos cocos de fincas cercanas, cosechados en su punto justo de frescura."
+    },
+    {
+      "id": 2,
+      "title": "100% natural",
+      "description": "Texto temporal: agua de coco pura, tal como sale del fruto, sin mezclas ni aditivos."
+    },
+    {
+      "id": 3,
+      "title": "Sin conservantes",
+      "description": "Texto temporal: ningún químico añadido para alargar su vida útil, solo coco real."
+    },
+    {
+      "id": 4,
+      "title": "Sin azúcar añadida",
+      "description": "Texto temporal: el dulzor natural del coco, sin azúcares ni endulzantes extra."
+    },
+    {
+      "id": 5,
+      "title": "Refrigerada",
+      "description": "Texto temporal: siempre fría y lista para disfrutar en su punto perfecto."
+    }
+  ]
+}
