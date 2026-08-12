@@ -41,6 +41,8 @@ export function useDiscreteStory({
     let previousEndTop = end.getBoundingClientRect().top;
     let wheelLocked = false;
     let wheelCaptured = false;
+    let wheelGestureActive = false;
+    let entryWheelLocked = false;
     let wheelTimer: ReturnType<typeof setTimeout> | undefined;
     let exitTimer: ReturnType<typeof setTimeout> | undefined;
     let entryNormalizationFrame: number | undefined;
@@ -48,7 +50,10 @@ export function useDiscreteStory({
     let isNormalizingEntry = false;
     let exitTargetPhase: "before" | "after" | null = null;
     let touchStartY: number | null = null;
+    let touchIsActive = false;
+    let touchStartedActive = false;
     let touchCaptured = false;
+    let entryTouchConsumed = false;
     let pendingExitDirection: 1 | -1 | null = null;
 
     const getOffset = () =>
@@ -84,6 +89,13 @@ export function useDiscreteStory({
       updateStep(direction > 0 ? 0 : lastStep);
       updatePhase("active");
       normalizeEntry(direction);
+
+      if (wheelGestureActive) {
+        entryWheelLocked = true;
+        wheelLocked = true;
+        wheelCaptured = true;
+      }
+      if (touchIsActive) entryTouchConsumed = true;
     };
 
     const finishExit = (nextPhase: "before" | "after") => {
@@ -160,14 +172,22 @@ export function useDiscreteStory({
     const unlockWheelAfterIdle = () => {
       if (wheelTimer) clearTimeout(wheelTimer);
       wheelTimer = setTimeout(() => {
+        wheelGestureActive = false;
+        entryWheelLocked = false;
         wheelLocked = false;
         wheelCaptured = false;
       }, WHEEL_GESTURE_IDLE_MS);
     };
 
     const onWheel = (event: WheelEvent) => {
-      if (phaseRef.current !== "active" || event.deltaY === 0) return;
+      if (event.deltaY === 0) return;
+      wheelGestureActive = true;
       unlockWheelAfterIdle();
+      if (phaseRef.current !== "active") return;
+      if (entryWheelLocked) {
+        event.preventDefault();
+        return;
+      }
       if (wheelLocked) {
         if (wheelCaptured) event.preventDefault();
         return;
@@ -178,13 +198,21 @@ export function useDiscreteStory({
     };
 
     const onTouchStart = (event: TouchEvent) => {
-      touchStartY = phaseRef.current === "active" ? event.touches[0]?.clientY ?? null : null;
+      touchIsActive = true;
+      touchStartedActive = phaseRef.current === "active";
+      touchStartY = event.touches[0]?.clientY ?? null;
       touchCaptured = false;
+      entryTouchConsumed = false;
       pendingExitDirection = null;
     };
 
     const onTouchMove = (event: TouchEvent) => {
       if (touchStartY === null) return;
+      if (entryTouchConsumed) {
+        if (event.cancelable) event.preventDefault();
+        return;
+      }
+      if (!touchStartedActive || phaseRef.current !== "active") return;
       if (touchCaptured) {
         if (event.cancelable) event.preventDefault();
         return;
@@ -204,16 +232,22 @@ export function useDiscreteStory({
     };
 
     const onTouchEnd = () => {
-      const exitDirection = pendingExitDirection;
+      const exitDirection = entryTouchConsumed ? null : pendingExitDirection;
+      touchIsActive = false;
+      touchStartedActive = false;
       touchStartY = null;
       touchCaptured = false;
+      entryTouchConsumed = false;
       pendingExitDirection = null;
       if (exitDirection !== null) exit(exitDirection);
     };
 
     const onTouchCancel = () => {
+      touchIsActive = false;
+      touchStartedActive = false;
       touchStartY = null;
       touchCaptured = false;
+      entryTouchConsumed = false;
       pendingExitDirection = null;
     };
 
@@ -225,10 +259,10 @@ export function useDiscreteStory({
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: false });
-    container.addEventListener("touchstart", onTouchStart, { passive: true });
-    container.addEventListener("touchmove", onTouchMove, { passive: false });
-    container.addEventListener("touchend", onTouchEnd, { passive: true });
-    container.addEventListener("touchcancel", onTouchCancel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", onTouchCancel, { passive: true });
 
     return () => {
       if (wheelTimer) clearTimeout(wheelTimer);
@@ -237,10 +271,10 @@ export function useDiscreteStory({
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("scrollend", onScrollEnd);
       window.removeEventListener("wheel", onWheel);
-      container.removeEventListener("touchstart", onTouchStart);
-      container.removeEventListener("touchmove", onTouchMove);
-      container.removeEventListener("touchend", onTouchEnd);
-      container.removeEventListener("touchcancel", onTouchCancel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchcancel", onTouchCancel);
     };
   }, [desktopMediaQuery, desktopOffsetPx, mobileOffsetPx, stepCount]);
 
