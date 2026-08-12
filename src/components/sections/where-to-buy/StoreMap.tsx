@@ -14,9 +14,9 @@ interface StoreMapProps {
   prefersReducedMotion: boolean;
 }
 
-/** Rough geographic center of Colombia — sensible fallback before bounds fit. */
-const DEFAULT_CENTER: [number, number] = [4.711, -74.0721];
-const DEFAULT_ZOOM = 6;
+/** Valle de Aburrá fallback used when a filter has no matching stores. */
+const DEFAULT_CENTER: [number, number] = [6.205, -75.58];
+const DEFAULT_ZOOM = 11;
 
 /**
  * Builds a small teardrop-shaped pin (plain CSS, no external icon sheet)
@@ -55,7 +55,16 @@ function MapController({
   const hasFitRef = useRef(false);
 
   useEffect(() => {
-    if (locations.length === 0) return;
+    if (locations.length === 0) {
+      map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+      return;
+    }
+    if (locations.length === 1) {
+      const [location] = locations;
+      map.setView([location.latitude, location.longitude], 14);
+      hasFitRef.current = true;
+      return;
+    }
     const bounds = L.latLngBounds(
       locations.map((location) => [location.latitude, location.longitude] as [number, number]),
     );
@@ -111,7 +120,7 @@ export function StoreMap({ locations, selectedId, onSelect, isRevealed, prefersR
               <div className="min-w-[160px] text-sm">
                 <p className="font-semibold text-text-primary">{location.name}</p>
                 <p className="text-text-secondary">{location.address}</p>
-                <p className="text-text-secondary">{location.city}</p>
+                <p className="text-text-secondary">{location.neighborhood}, {location.city}</p>
               </div>
             </Popup>
           </Marker>

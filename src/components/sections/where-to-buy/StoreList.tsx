@@ -50,7 +50,7 @@ export function StoreList({ locations, selectedId, onSelect, isRevealed }: Store
   if (locations.length === 0) {
     return (
       <p className="rounded-2xl border border-dashed border-border bg-surface p-6 text-center text-sm text-text-secondary">
-        No encontramos puntos de venta para esta ciudad todavía.
+        No encontramos puntos de venta en esta zona.
       </p>
     );
   }
@@ -113,7 +113,7 @@ export function StoreList({ locations, selectedId, onSelect, isRevealed }: Store
                     <div>
                       <p className="font-semibold text-text-primary">{location.name}</p>
                       <p className="text-sm text-text-secondary">{location.address}</p>
-                      <p className="text-sm text-text-secondary">{location.city}</p>
+                      <p className="text-sm text-text-secondary">{location.neighborhood}, {location.city}</p>
                     </div>
                   </div>
                   <span className="shrink-0 rounded-full bg-surface-lime px-2.5 py-1 text-xs font-semibold text-primary-green">

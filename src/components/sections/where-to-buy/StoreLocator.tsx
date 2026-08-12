@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { StoreList } from "./StoreList";
 import type { StoreLocation } from "@/types/store-location";
 
@@ -18,6 +17,7 @@ const StoreMap = dynamic(() => import("./StoreMap").then((module) => module.Stor
 });
 
 const ALL_CITIES_VALUE = "all";
+const ALL_NEIGHBORHOODS_VALUE = "all";
 
 interface StoreLocatorProps {
   locations: StoreLocation[];
@@ -26,6 +26,7 @@ interface StoreLocatorProps {
 export function StoreLocator({ locations }: StoreLocatorProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeCity, setActiveCity] = useState<string>(ALL_CITIES_VALUE);
+  const [activeNeighborhood, setActiveNeighborhood] = useState<string>(ALL_NEIGHBORHOODS_VALUE);
   const [isRevealed, setIsRevealed] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -64,48 +65,89 @@ export function StoreLocator({ locations }: StoreLocatorProps) {
     [locations],
   );
 
+  const neighborhoods = useMemo(() => {
+    if (activeCity === ALL_CITIES_VALUE) return [];
+    return Array.from(
+      new Set(
+        locations
+          .filter((location) => location.city === activeCity)
+          .map((location) => location.neighborhood),
+      ),
+    ).sort((a, b) => a.localeCompare(b, "es"));
+  }, [locations, activeCity]);
+
   const filteredLocations = useMemo(
     () =>
-      activeCity === ALL_CITIES_VALUE
-        ? locations
-        : locations.filter((location) => location.city === activeCity),
-    [locations, activeCity],
+      locations.filter(
+        (location) =>
+          (activeCity === ALL_CITIES_VALUE || location.city === activeCity) &&
+          (activeNeighborhood === ALL_NEIGHBORHOODS_VALUE ||
+            location.neighborhood === activeNeighborhood),
+      ),
+    [locations, activeCity, activeNeighborhood],
   );
 
   const handleSelectCity = (value: string) => {
     if (!value) return;
     setActiveCity(value);
-    setSelectedId(null);
+    setActiveNeighborhood(ALL_NEIGHBORHOODS_VALUE);
+    if (
+      selectedId &&
+      value !== ALL_CITIES_VALUE &&
+      !locations.some(
+        (location) => location.id === selectedId && location.city === value,
+      )
+    ) {
+      setSelectedId(null);
+    }
+  };
+
+  const handleSelectNeighborhood = (value: string) => {
+    setActiveNeighborhood(value);
+    if (
+      selectedId &&
+      !locations.some(
+        (location) =>
+          location.id === selectedId &&
+          (activeCity === ALL_CITIES_VALUE || location.city === activeCity) &&
+          (value === ALL_NEIGHBORHOODS_VALUE || location.neighborhood === value),
+      )
+    ) {
+      setSelectedId(null);
+    }
   };
 
   return (
     <div ref={rootRef}>
-      {cities.length > 1 && (
-        <ToggleGroup
-          type="single"
-          value={activeCity}
-          onValueChange={handleSelectCity}
-          variant="outline"
-          className="mb-6 flex-wrap justify-center gap-2"
-          aria-label="Filtrar puntos de venta por ciudad"
-        >
-          <ToggleGroupItem
-            value={ALL_CITIES_VALUE}
-            className="rounded-full border-border px-4 data-[state=on]:border-primary-green data-[state=on]:bg-surface-green data-[state=on]:text-primary-green"
+      <div className="mx-auto mb-6 grid max-w-xl gap-4 sm:grid-cols-2">
+        <label className="grid gap-1.5 text-sm font-semibold text-text-primary">
+          Ciudad
+          <select
+            value={activeCity}
+            onChange={(event) => handleSelectCity(event.target.value)}
+            className="h-11 w-full rounded-xl border border-border bg-surface px-3 font-normal outline-none transition focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
           >
-            Todas las ciudades
-          </ToggleGroupItem>
-          {cities.map((city) => (
-            <ToggleGroupItem
-              key={city}
-              value={city}
-              className="rounded-full border-border px-4 data-[state=on]:border-primary-green data-[state=on]:bg-surface-green data-[state=on]:text-primary-green"
-            >
-              {city}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-      )}
+            <option value={ALL_CITIES_VALUE}>Todas las ciudades</option>
+            {cities.map((city) => (
+              <option key={city} value={city}>{city}</option>
+            ))}
+          </select>
+        </label>
+        <label className="grid gap-1.5 text-sm font-semibold text-text-primary">
+          Barrio o zona
+          <select
+            value={activeNeighborhood}
+            onChange={(event) => handleSelectNeighborhood(event.target.value)}
+            disabled={activeCity === ALL_CITIES_VALUE}
+            className="h-11 w-full rounded-xl border border-border bg-surface px-3 font-normal outline-none transition focus:border-primary-green focus:ring-2 focus:ring-primary-green/20 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <option value={ALL_NEIGHBORHOODS_VALUE}>Todos los barrios</option>
+            {neighborhoods.map((neighborhood) => (
+              <option key={neighborhood} value={neighborhood}>{neighborhood}</option>
+            ))}
+          </select>
+        </label>
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-6">
         {/* Map — shown first on mobile; fades + scales in very subtly. */}

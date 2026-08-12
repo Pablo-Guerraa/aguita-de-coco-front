@@ -6,6 +6,8 @@ export interface StoreLocation {
   id: string;
   name: string;
   city: string;
+  /** Barrio, sector or commonly understood zone within the municipality. */
+  neighborhood: string;
   address: string;
   latitude: number;
   longitude: number;
