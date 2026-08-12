@@ -2,87 +2,103 @@
 
 import { useEffect, useRef, useState } from "react";
 
+const WHEEL_GESTURE_IDLE_MS = 200;
+const TOUCH_SWIPE_THRESHOLD_PX = 44;
+
 /**
- * Tracks how far the user has scrolled through a tall container, expressed
- * as a 0→1 progress value.
- *
- * `progress` reaches 0 the moment the container's top edge lines up with
- * `stickyOffsetPx` from the top of the viewport, and reaches 1 the moment
- * the container's bottom edge lines up with the bottom of the viewport —
- * i.e. exactly the window during which a `sticky` child (pinned at
- * `top: stickyOffsetPx`) inside this container stays pinned. This makes it
- * a drop-in driver for scroll-linked ("scrollytelling") visuals that live
- * next to a normally-flowing, taller column of content.
- *
- * Listens with a rAF-throttled scroll/resize handler and disconnects while
- * the container is far outside the viewport to avoid unnecessary work.
+ * Turns wheel gestures and vertical swipes into discrete story steps. The
+ * wheel lock is released only after the event stream has been quiet, so the
+ * many events produced by trackpad inertia still count as one gesture.
  */
-export function useScrollProgress<T extends HTMLElement>(stickyOffsetPx = 0) {
+export function useScrollSteps<T extends HTMLElement>(stepCount: number, stickyOffsetPx = 0) {
   const ref = useRef<T | null>(null);
-  const [progress, setProgress] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
+  const activeStepRef = useRef(0);
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return;
+    if (!node || stepCount < 1) return;
 
-    let ticking = false;
-    let isNearViewport = true;
+    const lastStep = stepCount - 1;
+    let wheelLocked = false;
+    let wheelWasCaptured = false;
+    let wheelTimer: ReturnType<typeof setTimeout> | undefined;
+    let touchStartY: number | null = null;
 
-    const computeProgress = () => {
-      ticking = false;
+    const changeStep = (direction: 1 | -1) => {
+      const next = Math.min(lastStep, Math.max(0, activeStepRef.current + direction));
+      if (next === activeStepRef.current) return false;
+      activeStepRef.current = next;
+      setActiveStep(next);
+      return true;
+    };
+
+    const isPinned = () => {
       const rect = node.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const travel = rect.height - viewportHeight;
+      return rect.top <= stickyOffsetPx + 1 && rect.bottom >= window.innerHeight - 1;
+    };
 
-      let next: number;
-      if (travel <= 0) {
-        // Container is shorter than the viewport: it's either fully
-        // in view (mid animation) or not yet/no longer reached.
-        next = rect.top <= stickyOffsetPx ? 1 : 0;
-      } else {
-        next = (stickyOffsetPx - rect.top) / travel;
+    const unlockWheelAfterIdle = () => {
+      if (wheelTimer) clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => {
+        wheelLocked = false;
+        wheelWasCaptured = false;
+      }, WHEEL_GESTURE_IDLE_MS);
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      if (!isPinned() || event.deltaY === 0) return;
+      unlockWheelAfterIdle();
+
+      if (wheelLocked) {
+        if (wheelWasCaptured) event.preventDefault();
+        return;
       }
-      setProgress(Math.min(1, Math.max(0, next)));
+
+      const direction = event.deltaY > 0 ? 1 : -1;
+      wheelLocked = true;
+      wheelWasCaptured = changeStep(direction);
+      if (wheelWasCaptured) event.preventDefault();
     };
 
-    const requestTick = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(computeProgress);
+    const onTouchStart = (event: TouchEvent) => {
+      touchStartY = isPinned() ? event.touches[0]?.clientY ?? null : null;
     };
 
-    computeProgress();
-
-    const onScroll = () => {
-      if (isNearViewport) requestTick();
+    const onTouchEnd = (event: TouchEvent) => {
+      if (touchStartY === null || !isPinned()) return;
+      const endY = event.changedTouches[0]?.clientY;
+      if (endY === undefined) return;
+      const delta = touchStartY - endY;
+      touchStartY = null;
+      if (Math.abs(delta) < TOUCH_SWIPE_THRESHOLD_PX) return;
+      changeStep(delta > 0 ? 1 : -1);
     };
-    const onResize = () => requestTick();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
+    const syncBoundaryStep = () => {
+      const rect = node.getBoundingClientRect();
+      let next: number | undefined;
+      if (rect.top > stickyOffsetPx + 1) next = 0;
+      else if (rect.bottom < window.innerHeight - 1) next = lastStep;
+      if (next !== undefined && next !== activeStepRef.current) {
+        activeStepRef.current = next;
+        setActiveStep(next);
+      }
+    };
 
-    // Only keep tracking scroll while the container is reasonably close to
-    // the viewport — once it's far away, progress is pinned at 0 or 1 and
-    // there is nothing to compute until it approaches again.
-    let observer: IntersectionObserver | undefined;
-    if (typeof IntersectionObserver !== "undefined") {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          isNearViewport = entry.isIntersecting;
-          if (isNearViewport) requestTick();
-        },
-        { rootMargin: "50% 0px 50% 0px" },
-      );
-      observer.observe(node);
-    }
+    window.addEventListener("wheel", onWheel, { passive: false });
+    node.addEventListener("touchstart", onTouchStart, { passive: true });
+    node.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("scroll", syncBoundaryStep, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-      observer?.disconnect();
+      if (wheelTimer) clearTimeout(wheelTimer);
+      window.removeEventListener("wheel", onWheel);
+      node.removeEventListener("touchstart", onTouchStart);
+      node.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("scroll", syncBoundaryStep);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stickyOffsetPx]);
+  }, [stepCount, stickyOffsetPx]);
 
-  return { ref, progress };
+  return { ref, activeStep };
 }

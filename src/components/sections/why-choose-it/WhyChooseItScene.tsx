@@ -4,32 +4,19 @@ import Image from "next/image";
 import { Sparkles } from "lucide-react";
 import { WhyChooseItBottle } from "./WhyChooseItBottle";
 import { WhyChooseItJet } from "./WhyChooseItJet";
-import {
-  getFinishCocoOpacity,
-  getFillPercent,
-  getIdleCocoOpacity,
-  getJetGrowth,
-  getJetOpacity,
-  getPouringCocoOpacity,
-  isFillComplete,
-} from "./why-choose-it-utils";
+import { getSceneStep } from "./why-choose-it-utils";
 
 interface WhyChooseItSceneProps {
-  progress: number;
+  activeStep: number;
 }
 
 /**
  * Sticky visual: coconut on top, pouring jet, bottle filling below —
- * entirely driven by `progress` (0→1), never by its own timer.
+ * entirely driven by the current discrete step, never by its own timer.
  */
-export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
-  const fillPercent = getFillPercent(progress);
-  const jetOpacity = getJetOpacity(progress);
-  const jetGrowth = getJetGrowth(progress);
-  const complete = isFillComplete(progress);
-  const idleOpacity = getIdleCocoOpacity(progress);
-  const pouringOpacity = getPouringCocoOpacity(progress);
-  const finishOpacity = getFinishCocoOpacity(progress);
+export function WhyChooseItScene({ activeStep }: WhyChooseItSceneProps) {
+  const scene = getSceneStep(activeStep);
+  const complete = scene.coco === "finish";
 
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-start pt-3 lg:pt-4 lg:pb-6">
@@ -54,17 +41,17 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
             alt=""
             fill
             sizes="140px"
-            className="object-contain object-center drop-shadow-xl"
-            style={{ opacity: idleOpacity, transform: "scale(0.96) translateY(1%)" }}
+            className="object-contain object-center drop-shadow-xl transition-opacity duration-500 ease-out motion-reduce:transition-none"
+            style={{ opacity: scene.coco === "idle" ? 1 : 0, transform: "scale(0.96) translateY(1%)" }}
           />
           <Image
             src="/coco-pouring.png"
             alt=""
             fill
             sizes="140px"
-            className="object-contain object-[48%_52%] drop-shadow-xl"
+            className="object-contain object-[48%_52%] drop-shadow-xl transition-opacity duration-500 ease-out motion-reduce:transition-none"
             style={{
-              opacity: pouringOpacity,
+              opacity: scene.coco === "pouring" ? 1 : 0,
               transform: "translateX(-1.5%) scale(1.04)",
             }}
           />
@@ -73,9 +60,9 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
             alt=""
             fill
             sizes="140px"
-            className="object-contain object-[50%_48%] drop-shadow-xl"
+            className="object-contain object-[50%_48%] drop-shadow-xl transition-opacity duration-500 ease-out motion-reduce:transition-none"
             style={{
-              opacity: finishOpacity,
+              opacity: scene.coco === "finish" ? 1 : 0,
               transform: "translateY(1.5%) scale(1.18)",
             }}
           />
@@ -89,14 +76,14 @@ export function WhyChooseItScene({ progress }: WhyChooseItSceneProps) {
       </div>
 
       <WhyChooseItJet
-        opacity={jetOpacity}
-        growth={jetGrowth}
+        opacity={scene.jet ? 1 : 0}
+        growth={scene.jet ? 1 : 0}
         className="z-10 min-h-12 w-6 flex-1 lg:h-auto lg:min-h-24 lg:flex-1"
       />
 
       <div className="relative z-10 w-[128px] shrink-0 sm:w-[144px] lg:w-[176px]">
         <WhyChooseItBottle
-          fillPercent={fillPercent}
+          fillPercent={scene.fill}
           isComplete={complete}
           className="h-auto w-full drop-shadow-lg"
         />

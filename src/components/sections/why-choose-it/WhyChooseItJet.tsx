@@ -16,7 +16,7 @@ export function WhyChooseItJet({ opacity, growth, className }: WhyChooseItJetPro
   return (
     <div
       aria-hidden="true"
-      className={`why-jet pointer-events-none relative ${className ?? ""}`}
+      className={`why-jet pointer-events-none relative transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none ${className ?? ""}`}
       style={{ opacity, transform: `scaleY(${Math.max(growth, 0.001)})` }}
     >
       <div className="why-jet-stream absolute inset-y-0 left-[calc(50%-3px)] w-1.5 overflow-hidden rounded-full bg-gradient-to-b from-[#FFFBEA]/65 via-[#F3E9BD]/85 to-[#DCE6B8]/90 shadow-[0_0_6px_rgba(243,233,189,0.55)]">
