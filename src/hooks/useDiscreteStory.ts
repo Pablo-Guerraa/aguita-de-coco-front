@@ -43,9 +43,13 @@ export function useDiscreteStory({
     let wheelCaptured = false;
     let wheelTimer: ReturnType<typeof setTimeout> | undefined;
     let exitTimer: ReturnType<typeof setTimeout> | undefined;
+    let entryNormalizationFrame: number | undefined;
     let exiting = false;
+    let isNormalizingEntry = false;
+    let exitTargetPhase: "before" | "after" | null = null;
     let touchStartY: number | null = null;
     let touchCaptured = false;
+    let pendingExitDirection: 1 | -1 | null = null;
 
     const getOffset = () =>
       window.matchMedia(desktopMediaQuery).matches ? desktopOffsetPx : mobileOffsetPx;
@@ -60,38 +64,64 @@ export function useDiscreteStory({
       setActiveStep(next);
     };
 
+    const normalizeEntry = (direction: 1 | -1) => {
+      const targetTop = direction > 0 ? getOffset() : window.innerHeight;
+      const boundary = direction > 0 ? start : end;
+      const correction = boundary.getBoundingClientRect().top - targetTop;
+      if (Math.abs(correction) <= 1) return;
+
+      isNormalizingEntry = true;
+      window.scrollBy({ top: correction, behavior: "auto" });
+      entryNormalizationFrame = window.requestAnimationFrame(() => {
+        isNormalizingEntry = false;
+        lastScrollY = window.scrollY;
+        previousStartTop = start.getBoundingClientRect().top;
+        previousEndTop = end.getBoundingClientRect().top;
+      });
+    };
+
     const enter = (direction: 1 | -1) => {
       updateStep(direction > 0 ? 0 : lastStep);
       updatePhase("active");
+      normalizeEntry(direction);
     };
 
     const finishExit = (nextPhase: "before" | "after") => {
       exiting = false;
+      exitTargetPhase = null;
       updatePhase(nextPhase);
       window.removeEventListener("scrollend", onScrollEnd);
-      if (exitTimer) clearTimeout(exitTimer);
+      if (exitTimer) {
+        clearTimeout(exitTimer);
+        exitTimer = undefined;
+      }
     };
 
     const onScrollEnd = () => {
-      if (!exiting) return;
-      finishExit(activeStepRef.current === 0 ? "before" : "after");
+      if (!exiting || !exitTargetPhase) return;
+      finishExit(exitTargetPhase);
     };
 
     const exit = (direction: 1 | -1) => {
       if (exiting) return;
-      exiting = true;
+      const targetPhase = direction > 0 ? "after" : "before";
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const target = direction > 0 ? end : start;
+
+      exiting = true;
+      exitTargetPhase = targetPhase;
+
+      if (!reducedMotion) {
+        window.addEventListener("scrollend", onScrollEnd, { once: true });
+        exitTimer = setTimeout(() => finishExit(targetPhase), EXIT_FALLBACK_MS);
+      }
+
       target.scrollIntoView({
         behavior: reducedMotion ? "auto" : "smooth",
         block: direction > 0 ? "start" : "end",
       });
 
-      if (reducedMotion) finishExit(direction > 0 ? "after" : "before");
-      else {
-        window.addEventListener("scrollend", onScrollEnd, { once: true });
-        exitTimer = setTimeout(() => finishExit(direction > 0 ? "after" : "before"), EXIT_FALLBACK_MS);
-      }
+      if (reducedMotion) finishExit(targetPhase);
     };
 
     const advance = (direction: 1 | -1) => {
@@ -108,6 +138,13 @@ export function useDiscreteStory({
       const startTop = start.getBoundingClientRect().top;
       const endTop = end.getBoundingClientRect().top;
       const offset = getOffset();
+
+      if (isNormalizingEntry) {
+        previousStartTop = startTop;
+        previousEndTop = endTop;
+        lastScrollY = scrollY;
+        return;
+      }
 
       if (!exiting && phaseRef.current !== "active") {
         if (direction > 0 && previousStartTop > offset && startTop <= offset) enter(1);
@@ -143,6 +180,7 @@ export function useDiscreteStory({
     const onTouchStart = (event: TouchEvent) => {
       touchStartY = phaseRef.current === "active" ? event.touches[0]?.clientY ?? null : null;
       touchCaptured = false;
+      pendingExitDirection = null;
     };
 
     const onTouchMove = (event: TouchEvent) => {
@@ -157,12 +195,26 @@ export function useDiscreteStory({
       if (delta === 0) return;
       if (event.cancelable) event.preventDefault();
       if (Math.abs(delta) < TOUCH_SWIPE_THRESHOLD_PX) return;
-      touchCaptured = advance(delta > 0 ? 1 : -1);
+      const direction = delta > 0 ? 1 : -1;
+      const next = activeStepRef.current + direction;
+      if (next < 0 || next > lastStep) {
+        pendingExitDirection = direction;
+        touchCaptured = true;
+      } else touchCaptured = advance(direction);
     };
 
-    const resetTouch = () => {
+    const onTouchEnd = () => {
+      const exitDirection = pendingExitDirection;
       touchStartY = null;
       touchCaptured = false;
+      pendingExitDirection = null;
+      if (exitDirection !== null) exit(exitDirection);
+    };
+
+    const onTouchCancel = () => {
+      touchStartY = null;
+      touchCaptured = false;
+      pendingExitDirection = null;
     };
 
     const initialStartTop = start.getBoundingClientRect().top;
@@ -175,19 +227,20 @@ export function useDiscreteStory({
     window.addEventListener("wheel", onWheel, { passive: false });
     container.addEventListener("touchstart", onTouchStart, { passive: true });
     container.addEventListener("touchmove", onTouchMove, { passive: false });
-    container.addEventListener("touchend", resetTouch, { passive: true });
-    container.addEventListener("touchcancel", resetTouch, { passive: true });
+    container.addEventListener("touchend", onTouchEnd, { passive: true });
+    container.addEventListener("touchcancel", onTouchCancel, { passive: true });
 
     return () => {
       if (wheelTimer) clearTimeout(wheelTimer);
       if (exitTimer) clearTimeout(exitTimer);
+      if (entryNormalizationFrame) window.cancelAnimationFrame(entryNormalizationFrame);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("scrollend", onScrollEnd);
       window.removeEventListener("wheel", onWheel);
       container.removeEventListener("touchstart", onTouchStart);
       container.removeEventListener("touchmove", onTouchMove);
-      container.removeEventListener("touchend", resetTouch);
-      container.removeEventListener("touchcancel", resetTouch);
+      container.removeEventListener("touchend", onTouchEnd);
+      container.removeEventListener("touchcancel", onTouchCancel);
     };
   }, [desktopMediaQuery, desktopOffsetPx, mobileOffsetPx, stepCount]);
 
