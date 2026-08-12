@@ -2,28 +2,31 @@
 
 import type { WhyChooseItAttribute } from "@/types/why-choose-it";
 import { ATTRIBUTE_ICONS } from "./WhyChooseItAttributesList";
+import { getActiveAttributeIndex } from "./why-choose-it-utils";
 
 interface WhyChooseItActiveAttributeMobileProps {
   attributes: WhyChooseItAttribute[];
-  activeStep: number;
+  progress: number;
 }
 
 /** Compact, cross-fading copy for the mobile sticky story. */
 export function WhyChooseItActiveAttributeMobile({
   attributes,
-  activeStep,
+  progress,
 }: WhyChooseItActiveAttributeMobileProps) {
+  const activeIndex = getActiveAttributeIndex(progress, attributes.length);
+
   return (
     <div className="grid w-full shrink-0 lg:hidden">
       {attributes.map((attribute, index) => {
         const Icon = ATTRIBUTE_ICONS[index % ATTRIBUTE_ICONS.length];
-        const isActive = index === activeStep;
+        const isActive = index === activeIndex;
 
         return (
           <div
             key={attribute.id}
             aria-hidden={!isActive}
-            className={`col-start-1 row-start-1 flex items-start gap-3 transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none ${
+            className={`col-start-1 row-start-1 flex items-start gap-3 transition-[opacity,transform] duration-500 ease-out ${
               isActive
                 ? "translate-y-0 opacity-100"
                 : "pointer-events-none translate-y-1.5 opacity-0"

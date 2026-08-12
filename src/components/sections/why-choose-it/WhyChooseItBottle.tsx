@@ -67,7 +67,7 @@ export function WhyChooseItBottle({ fillPercent, isComplete, className }: WhyCho
           width={VIEW_WIDTH - 40}
           height={liquidHeight + 20}
           fill="url(#why-liquid-gradient)"
-          className="why-liquid-fill transition-[y,height] duration-700 ease-out motion-reduce:transition-none"
+          className="why-liquid-fill"
         />
 
         {/* Surface highlight with a very subtle idle wobble */}
@@ -79,7 +79,7 @@ export function WhyChooseItBottle({ fillPercent, isComplete, className }: WhyCho
             ry={4}
             fill="white"
             opacity={0.3}
-            className="why-liquid-surface transition-[cy] duration-700 ease-out motion-reduce:transition-none"
+            className="why-liquid-surface"
           />
         )}
 
