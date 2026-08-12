@@ -5,12 +5,21 @@ import { useEffect, useRef, useState } from "react";
 const WHEEL_GESTURE_IDLE_MS = 200;
 const TOUCH_SWIPE_THRESHOLD_PX = 44;
 
+interface ResponsiveStickyOffset {
+  mobile: number;
+  desktop: number;
+  desktopMediaQuery: string;
+}
+
 /**
  * Turns wheel gestures and vertical swipes into discrete story steps. The
  * wheel lock is released only after the event stream has been quiet, so the
  * many events produced by trackpad inertia still count as one gesture.
  */
-export function useScrollSteps<T extends HTMLElement>(stepCount: number, stickyOffsetPx = 0) {
+export function useScrollSteps<T extends HTMLElement>(
+  stepCount: number,
+  stickyOffset: number | ResponsiveStickyOffset = 0,
+) {
   const ref = useRef<T | null>(null);
   const [activeStep, setActiveStep] = useState(0);
   const activeStepRef = useRef(0);
@@ -27,6 +36,13 @@ export function useScrollSteps<T extends HTMLElement>(stepCount: number, stickyO
     let touchCaptured = false;
     let touchReleasedToNativeScroll = false;
 
+    const getStickyOffsetPx = () =>
+      typeof stickyOffset === "number"
+        ? stickyOffset
+        : window.matchMedia(stickyOffset.desktopMediaQuery).matches
+          ? stickyOffset.desktop
+          : stickyOffset.mobile;
+
     const changeStep = (direction: 1 | -1) => {
       const next = Math.min(lastStep, Math.max(0, activeStepRef.current + direction));
       if (next === activeStepRef.current) return false;
@@ -37,6 +53,7 @@ export function useScrollSteps<T extends HTMLElement>(stepCount: number, stickyO
 
     const isPinned = () => {
       const rect = node.getBoundingClientRect();
+      const stickyOffsetPx = getStickyOffsetPx();
       return rect.top <= stickyOffsetPx + 1 && rect.bottom > stickyOffsetPx + 1;
     };
 
@@ -109,6 +126,7 @@ export function useScrollSteps<T extends HTMLElement>(stepCount: number, stickyO
 
     const syncBoundaryStep = () => {
       const rect = node.getBoundingClientRect();
+      const stickyOffsetPx = getStickyOffsetPx();
       let next: number | undefined;
       if (rect.top > stickyOffsetPx + 1) next = 0;
       else if (rect.bottom <= stickyOffsetPx + 1) next = lastStep;
@@ -134,7 +152,7 @@ export function useScrollSteps<T extends HTMLElement>(stepCount: number, stickyO
       node.removeEventListener("touchcancel", resetTouch);
       window.removeEventListener("scroll", syncBoundaryStep);
     };
-  }, [stepCount, stickyOffsetPx]);
+  }, [stepCount, stickyOffset]);
 
   return { ref, activeStep };
 }

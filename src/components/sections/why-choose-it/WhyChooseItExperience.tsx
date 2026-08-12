@@ -7,29 +7,32 @@ import { WhyChooseItAttributesList } from "./WhyChooseItAttributesList";
 import { WhyChooseItScene } from "./WhyChooseItScene";
 import { SCENE_STEPS } from "./why-choose-it-utils";
 
-/** Matches the sticky header's height (h-16 = 64px) plus a little
- * breathing room, so the pinned scene never sits flush under the header. */
-const STICKY_OFFSET_PX = 80;
+/** Keep gesture boundaries aligned with the responsive sticky top classes. */
+const STICKY_OFFSET = {
+  mobile: 64,
+  desktop: 80,
+  desktopMediaQuery: "(min-width: 1024px)",
+} as const;
 
 interface WhyChooseItExperienceProps {
   attributes: WhyChooseItAttribute[];
 }
 
 /**
- * The viewport-height wrapper provides the sticky scene's layout space,
- * while gestures—not artificial scroll distance—advance the story. Both the
- * active copy and the coconut+bottle scene update from the same step.
+ * A small, header-sized reserve beyond the viewport gives the sticky scene
+ * room to remain intact during the natural boundary gesture. Gestures—not a
+ * multi-viewport artificial track—advance the story itself.
  */
 export function WhyChooseItExperience({ attributes }: WhyChooseItExperienceProps) {
   const stepCount = Math.min(attributes.length, SCENE_STEPS.length);
-  const { ref, activeStep } = useScrollSteps<HTMLDivElement>(stepCount, STICKY_OFFSET_PX);
+  const { ref, activeStep } = useScrollSteps<HTMLDivElement>(stepCount, STICKY_OFFSET);
 
   if (attributes.length === 0) return null;
 
   return (
     <div
       ref={ref}
-      className="grid min-h-[calc(100svh-4rem)] gap-6 lg:min-h-[calc(100svh-6rem)] lg:grid-cols-2 lg:items-start lg:gap-16"
+      className="grid min-h-[calc(100svh+4rem)] gap-6 lg:min-h-[calc(100svh+5rem)] lg:grid-cols-2 lg:items-start lg:gap-16"
     >
       <div className="pointer-events-none col-start-1 row-start-1 order-2 invisible lg:pointer-events-auto lg:visible lg:sticky lg:top-20 lg:col-auto lg:row-auto lg:h-[calc(100svh-6rem)] lg:order-1">
         <WhyChooseItAttributesList attributes={attributes} activeStep={activeStep} />
