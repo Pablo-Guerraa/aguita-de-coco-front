@@ -24,6 +24,8 @@ export function useScrollSteps<T extends HTMLElement>(stepCount: number, stickyO
     let wheelWasCaptured = false;
     let wheelTimer: ReturnType<typeof setTimeout> | undefined;
     let touchStartY: number | null = null;
+    let touchCaptured = false;
+    let touchReleasedToNativeScroll = false;
 
     const changeStep = (direction: 1 | -1) => {
       const next = Math.min(lastStep, Math.max(0, activeStepRef.current + direction));
@@ -35,8 +37,11 @@ export function useScrollSteps<T extends HTMLElement>(stepCount: number, stickyO
 
     const isPinned = () => {
       const rect = node.getBoundingClientRect();
-      return rect.top <= stickyOffsetPx + 1 && rect.bottom >= window.innerHeight - 1;
+      return rect.top <= stickyOffsetPx + 1 && rect.bottom > stickyOffsetPx + 1;
     };
+
+    const hasStepInDirection = (direction: 1 | -1) =>
+      direction > 0 ? activeStepRef.current < lastStep : activeStepRef.current > 0;
 
     const unlockWheelAfterIdle = () => {
       if (wheelTimer) clearTimeout(wheelTimer);
@@ -63,23 +68,50 @@ export function useScrollSteps<T extends HTMLElement>(stepCount: number, stickyO
 
     const onTouchStart = (event: TouchEvent) => {
       touchStartY = isPinned() ? event.touches[0]?.clientY ?? null : null;
+      touchCaptured = false;
+      touchReleasedToNativeScroll = false;
     };
 
-    const onTouchEnd = (event: TouchEvent) => {
-      if (touchStartY === null || !isPinned()) return;
-      const endY = event.changedTouches[0]?.clientY;
-      if (endY === undefined) return;
-      const delta = touchStartY - endY;
-      touchStartY = null;
+    const onTouchMove = (event: TouchEvent) => {
+      if (touchStartY === null || touchReleasedToNativeScroll) return;
+
+      if (touchCaptured) {
+        if (event.cancelable) event.preventDefault();
+        return;
+      }
+
+      if (!isPinned()) return;
+      const currentY = event.touches[0]?.clientY;
+      if (currentY === undefined) return;
+      const delta = touchStartY - currentY;
+      if (delta === 0) return;
+
+      const direction = delta > 0 ? 1 : -1;
+      if (!hasStepInDirection(direction)) {
+        touchReleasedToNativeScroll = true;
+        return;
+      }
+
+      // Block physical scrolling as soon as this is known to be an in-story
+      // gesture; the threshold controls the step change, not the scroll lock.
+      if (event.cancelable) event.preventDefault();
       if (Math.abs(delta) < TOUCH_SWIPE_THRESHOLD_PX) return;
-      changeStep(delta > 0 ? 1 : -1);
+
+      changeStep(direction);
+      touchCaptured = true;
+    };
+
+    const resetTouch = () => {
+      touchStartY = null;
+      touchCaptured = false;
+      touchReleasedToNativeScroll = false;
     };
 
     const syncBoundaryStep = () => {
       const rect = node.getBoundingClientRect();
       let next: number | undefined;
       if (rect.top > stickyOffsetPx + 1) next = 0;
-      else if (rect.bottom < window.innerHeight - 1) next = lastStep;
+      else if (rect.bottom <= stickyOffsetPx + 1) next = lastStep;
       if (next !== undefined && next !== activeStepRef.current) {
         activeStepRef.current = next;
         setActiveStep(next);
@@ -88,14 +120,18 @@ export function useScrollSteps<T extends HTMLElement>(stepCount: number, stickyO
 
     window.addEventListener("wheel", onWheel, { passive: false });
     node.addEventListener("touchstart", onTouchStart, { passive: true });
-    node.addEventListener("touchend", onTouchEnd, { passive: true });
+    node.addEventListener("touchmove", onTouchMove, { passive: false });
+    node.addEventListener("touchend", resetTouch, { passive: true });
+    node.addEventListener("touchcancel", resetTouch, { passive: true });
     window.addEventListener("scroll", syncBoundaryStep, { passive: true });
 
     return () => {
       if (wheelTimer) clearTimeout(wheelTimer);
       window.removeEventListener("wheel", onWheel);
       node.removeEventListener("touchstart", onTouchStart);
-      node.removeEventListener("touchend", onTouchEnd);
+      node.removeEventListener("touchmove", onTouchMove);
+      node.removeEventListener("touchend", resetTouch);
+      node.removeEventListener("touchcancel", resetTouch);
       window.removeEventListener("scroll", syncBoundaryStep);
     };
   }, [stepCount, stickyOffsetPx]);

@@ -16,9 +16,9 @@ interface WhyChooseItExperienceProps {
 }
 
 /**
- * The wrapper owns the story's scroll height, while both the active copy
- * and the coconut+bottle scene stay pinned and update from the same step.
- * One complete gesture advances at most one discrete story step.
+ * The viewport-height wrapper provides the sticky scene's layout space,
+ * while gestures—not artificial scroll distance—advance the story. Both the
+ * active copy and the coconut+bottle scene update from the same step.
  */
 export function WhyChooseItExperience({ attributes }: WhyChooseItExperienceProps) {
   const stepCount = Math.min(attributes.length, SCENE_STEPS.length);
@@ -29,7 +29,7 @@ export function WhyChooseItExperience({ attributes }: WhyChooseItExperienceProps
   return (
     <div
       ref={ref}
-      className="grid min-h-[220vh] gap-6 sm:min-h-[250vh] lg:min-h-[360vh] lg:grid-cols-2 lg:items-start lg:gap-16"
+      className="grid min-h-[calc(100svh-4rem)] gap-6 lg:min-h-[calc(100svh-6rem)] lg:grid-cols-2 lg:items-start lg:gap-16"
     >
       <div className="pointer-events-none col-start-1 row-start-1 order-2 invisible lg:pointer-events-auto lg:visible lg:sticky lg:top-20 lg:col-auto lg:row-auto lg:h-[calc(100svh-6rem)] lg:order-1">
         <WhyChooseItAttributesList attributes={attributes} activeStep={activeStep} />
