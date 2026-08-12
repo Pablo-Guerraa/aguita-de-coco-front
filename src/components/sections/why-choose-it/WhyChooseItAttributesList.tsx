@@ -17,9 +17,9 @@ export function WhyChooseItAttributesList({
   activeStep,
 }: WhyChooseItAttributesListProps) {
   return (
-    <div className="relative flex flex-col">
+    <div className="relative grid h-full items-center">
       {/* Timeline track + progress dot — desktop only, purely decorative */}
-      <div aria-hidden="true" className="absolute top-2 bottom-2 left-3 hidden w-px bg-border lg:block">
+      <div aria-hidden="true" className="absolute top-[18%] bottom-[18%] left-3 hidden w-px bg-border lg:block">
         <div
           className="absolute left-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-green shadow-[0_0_0_4px_var(--color-surface-green)] transition-[top] duration-500 ease-out motion-reduce:transition-none"
           style={{ top: `${(activeStep / Math.max(1, attributes.length - 1)) * 100}%` }}
@@ -33,13 +33,14 @@ export function WhyChooseItAttributesList({
         return (
           <div
             key={attribute.id}
-            className="flex min-h-[44vh] flex-col justify-center py-8 pl-10 sm:min-h-[50vh] lg:min-h-[72vh] lg:py-0 lg:pl-12"
+            aria-hidden={!isActive}
+            className={`col-start-1 row-start-1 flex flex-col justify-center py-8 pl-10 transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none sm:py-0 lg:pl-12 ${
+              isActive
+                ? "translate-y-0 opacity-100"
+                : "pointer-events-none translate-y-2 opacity-0"
+            }`}
           >
-            <div
-              className={`max-w-md transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none ${
-                isActive ? "translate-y-0 opacity-100" : "translate-y-2 opacity-45"
-              }`}
-            >
+            <div className="max-w-md">
               <span
                 className={`inline-flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-500 motion-reduce:transition-none ${
                   isActive ? "bg-primary-green text-surface" : "bg-surface-green text-primary-green"
